@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements KeyListener {
     int score = 0; // 得分
     int scoreTimer = 0; // 分数计时器
 
-    private static final int SPEED_UP_SCORE = 500;  // 每500分升级一次
+    private static final int SPEED_UP_SCORE = 200;  // 每200分升级一次
     private static final int MAX_SPEED = 25;        // 最大速度
     private int currentSpeed = BackgroundImage.SPEED;  // 当前速度
 

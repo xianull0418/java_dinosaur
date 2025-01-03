@@ -19,6 +19,8 @@ public class Dinosaur {
     public int x, y; // 坐标
     private int jumpValue = 0; // 跳跃的增变量
     private boolean jumpState = false; // 跳跃状态
+    private boolean doubleJumpState = false;  // 二段跳状态
+    private int jumpCount = 0;     // 跳跃次数计数
     private int stepTimer = 0; // 踏步计时器
     private final int JUMP_HIGHT = 100; // 跳起最大高度
     private final int LOWEST_Y = 120; // 落地最低坐标
@@ -55,25 +57,35 @@ public class Dinosaur {
 
     // 跳跃
     public void jump() {
-        if (!jumpState) { // 如果没处于跳跃状态
-            Sound.jump(); // 播放跳跃音效
+        if (!jumpState) {  // 第一段跳
+            Sound.jump();
+            jumpState = true;
+            jumpCount = 1;
+            jumpValue = -4;  // 向上跳
+        } else if (!doubleJumpState && jumpCount == 1) {  // 第二段跳
+            Sound.jump();
+            doubleJumpState = true;
+            jumpCount = 2;
+            jumpValue = -4;  // 再次向上跳
+            y -= 30;  // 立即提升一些高度，让二段跳更明显
         }
-        jumpState = true; // 处于跳跃状态
     }
 
     // 移动
     public void move() {
-        step(); // 不断踏步
-        if (jumpState) { // 如果正在跳跃
-            if (y == LOWEST_Y) { // 如果纵坐标大于等于最低点---（越往上坐标越小）
-                jumpValue = -4; // 增变量为负值--向上跳
+        step();
+        if (jumpState) {
+            if (y <= LOWEST_Y - JUMP_HIGHT) {  // 到达最高点
+                jumpValue = 4;  // 开始下落
             }
-            if (y <= LOWEST_Y - JUMP_HIGHT) {// 如果跳过最高点
-                jumpValue = 4; // 增变量为正值--向下跳
-            }
-            y += jumpValue; // 纵坐标发生变化
-            if (y == LOWEST_Y) { // 如果再次落地
-                jumpState = false; // 停止跳跃
+            y += jumpValue;
+            
+            if (y >= LOWEST_Y) {  // 落地
+                y = LOWEST_Y;  // 确保不会低于地面
+                jumpState = false;
+                doubleJumpState = false;
+                jumpCount = 0;
+                jumpValue = 0;
             }
         }
     }
